@@ -1,0 +1,141 @@
+<element name="b-tabs">
+    <style>
+        b-tabs .b-tabs-navigation li{
+            display: inline;
+            font-weight: bold
+        }
+
+        b-tabs .b-tabs-navigation li.b-tabs-hidden{
+            font-weight: 400
+        }
+
+        b-tabs .b-tabs-navigation li:hover{
+            cursor: pointer;
+        }
+
+        b-tabs .b-tabs-hidden {
+            display: none;
+        }
+    </style>
+    <template>
+        
+    </template>
+    <script>
+        ({
+        	// ---- Component lifecycle ---- //
+
+            createdCallback: function() {
+                this.appendChild(this.template.content.cloneNode(true));
+
+                this.tabsNavigation = this.querySelector('ul');
+                this.tabsContainer = this.querySelector('div');
+                
+                this.initClasses();
+                this.initContainer();
+                this.addListeners();
+            },
+
+            detachedCallback: function() {
+                this.removeListeners();
+            },
+
+            // ---- Internal API ---- //
+
+            initClasses: function() {
+                if(this.tabsNavigation) {
+                    this.tabsNavigation.classList.add('b-tabs-navigation');
+                }
+                if(this.tabsContainer) {
+                    this.tabsContainer.classList.add('b-tabs-container');
+                }
+            },
+
+            initContainer: function() {
+                if(this.tabsContainer) {
+                    for(var i = 0; i<this.tabsContainer.children.length; i++) {
+                        this.hideElement(i);
+                    }
+                    this.displayTabAt(0);
+                }
+            },
+
+            addListeners: function() {
+                if(this.tabsNavigation) {
+                	this.displayListener = this.display.bind(this);
+                	this.tabsNavigation.addEventListener('click', this.displayListener);
+                }
+            },
+
+            removeListeners: function() {
+            	if(this.tabsNavigation && this.displayListener) {
+            		this.tabsNavigation.removeEventListener(this.displayListener);
+            		this.displayListener = null;
+            	}
+            },
+
+            display: function(e) {
+                var li = this.findLi(e.target);
+                if(li) {
+                    var toDisplayIdx = Array.prototype.indexOf.call(this.tabsNavigation.children, li);
+                    this.displayTabAt(toDisplayIdx);                    
+                }
+            },
+
+            displayTabAt: function(idx) {
+                this.hideElement(this.displayedElementIdx);
+
+                this.displayedElementIdx = idx;
+                this.displayCurrentContent();
+                this.displayCurrentTab();
+            },
+
+            displayCurrentContent: function() {
+                if(this.displayedElementIdx < this.tabsContainer.children.length) {
+                    var elementToDisplay = this.tabsContainer.children[this.displayedElementIdx];
+                    elementToDisplay.classList.remove('b-tabs-hidden');
+                }
+            },
+
+            displayCurrentTab: function() {
+                if(this.displayedElementIdx < this.tabsNavigation.children.length) {
+                    var elementToDisplay = this.tabsNavigation.children[this.displayedElementIdx];
+                    elementToDisplay.classList.remove('b-tabs-hidden');
+                }
+            },
+
+
+            hideElement: function(idx) {
+                if(idx !== undefined) {
+                    this.hideContent(idx);
+                    this.hideTab(idx);
+                }
+            },
+
+            hideContent: function(idx) {
+                var elementToHide = this.tabsContainer.children[idx];
+                elementToHide.classList.add('b-tabs-hidden');
+            },
+
+            hideTab: function(idx) {
+                var elementToHide = this.tabsNavigation.children[idx];
+                elementToHide.classList.add('b-tabs-hidden');
+            },
+
+            findLi: function(target) {
+                var currentNode = target;
+                var li = null;
+
+                while(currentNode.tagName !== 'B-TABS' && li === null) {
+                    if(currentNode.tagName === 'LI')
+                        li = currentNode;
+
+                    currentNode = currentNode.parentNode;
+                }
+
+                return li;
+            },
+
+
+        });
+    </script>
+</element>
