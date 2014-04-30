@@ -9,7 +9,28 @@
 </head>
 <body>
 
-	<b-tabs>
+	<style>
+        .b-tabs-navigation {
+            margin: 0;
+            margin-bottom: 4px;
+        }
+        .b-tabs-navigation li {
+            background: #fff;
+            border: 1px solid #ccc;
+            border-bottom: 1px solid #fff;
+            padding: 5px;
+        }
+        .b-tabs-navigation li.b-tabs-hidden {
+            background: #ddd;
+            border-bottom: 1px solid #ccc;
+        }
+        .b-tabs-container {
+            border: 1px solid #ccc;
+            width: 50%;
+            padding: 10px;
+        }
+    </style>
+    <b-tabs>
 		<ul>
 			<li>Tab 1</li>
 			<li>Tab 2</li>

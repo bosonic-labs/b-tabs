@@ -1,15 +1,15 @@
 <element name="b-tabs">
     <style>
-        b-tabs .b-tabs-navigation li{
+        b-tabs .b-tabs-navigation li {
             display: inline;
-            font-weight: bold
+            font-weight: bold;
         }
 
-        b-tabs .b-tabs-navigation li.b-tabs-hidden{
-            font-weight: 400
+        b-tabs .b-tabs-navigation li.b-tabs-hidden {
+            font-weight: 400;
         }
 
-        b-tabs .b-tabs-navigation li:hover{
+        b-tabs .b-tabs-navigation li:hover {
             cursor: pointer;
         }
 
@@ -42,17 +42,17 @@
             // ---- Internal API ---- //
 
             initClasses: function() {
-                if(this.tabsNavigation) {
+                if (this.tabsNavigation) {
                     this.tabsNavigation.classList.add('b-tabs-navigation');
                 }
-                if(this.tabsContainer) {
+                if (this.tabsContainer) {
                     this.tabsContainer.classList.add('b-tabs-container');
                 }
             },
 
             initContainer: function() {
-                if(this.tabsContainer) {
-                    for(var i = 0; i<this.tabsContainer.children.length; i++) {
+                if (this.tabsContainer) {
+                    for (var i = 0; i<this.tabsContainer.children.length; i++) {
                         this.hideElement(i);
                     }
                     this.displayTabAt(0);
@@ -60,14 +60,14 @@
             },
 
             addListeners: function() {
-                if(this.tabsNavigation) {
+                if (this.tabsNavigation) {
                 	this.displayListener = this.display.bind(this);
                 	this.tabsNavigation.addEventListener('click', this.displayListener);
                 }
             },
 
             removeListeners: function() {
-            	if(this.tabsNavigation && this.displayListener) {
+            	if (this.tabsNavigation && this.displayListener) {
             		this.tabsNavigation.removeEventListener(this.displayListener);
             		this.displayListener = null;
             	}
@@ -75,7 +75,7 @@
 
             display: function(e) {
                 var li = this.findLi(e.target);
-                if(li) {
+                if (li) {
                     var toDisplayIdx = Array.prototype.indexOf.call(this.tabsNavigation.children, li);
                     this.displayTabAt(toDisplayIdx);                    
                 }
@@ -90,14 +90,14 @@
             },
 
             displayCurrentContent: function() {
-                if(this.displayedElementIdx < this.tabsContainer.children.length) {
+                if (this.displayedElementIdx < this.tabsContainer.children.length) {
                     var elementToDisplay = this.tabsContainer.children[this.displayedElementIdx];
                     elementToDisplay.classList.remove('b-tabs-hidden');
                 }
             },
 
             displayCurrentTab: function() {
-                if(this.displayedElementIdx < this.tabsNavigation.children.length) {
+                if (this.displayedElementIdx < this.tabsNavigation.children.length) {
                     var elementToDisplay = this.tabsNavigation.children[this.displayedElementIdx];
                     elementToDisplay.classList.remove('b-tabs-hidden');
                 }
@@ -105,7 +105,7 @@
 
 
             hideElement: function(idx) {
-                if(idx !== undefined) {
+                if (idx !== undefined) {
                     this.hideContent(idx);
                     this.hideTab(idx);
                 }
@@ -125,16 +125,15 @@
                 var currentNode = target;
                 var li = null;
 
-                while(currentNode.tagName !== 'B-TABS' && li === null) {
-                    if(currentNode.tagName === 'LI')
+                while (currentNode.tagName !== 'B-TABS' && li === null) {
+                    if (currentNode.tagName === 'LI')
                         li = currentNode;
 
                     currentNode = currentNode.parentNode;
                 }
 
                 return li;
-            },
-
+            }
 
         });
     </script>
