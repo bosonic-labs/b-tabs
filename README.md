@@ -48,7 +48,7 @@ Both events contains a _detail_ property which contains target _tab_ and _conten
 ```js
 document.querySelector('b-tabs').addEventListener('b-tabs-willChange', function(e) {
     console.log('tab: '+e.detail.tab);
-    console.log('content: '+e.detail.content
+    console.log('content: '+e.detail.content);
 });
 
 document.querySelector('b-tabs').addEventListener('b-tabs-hasChanged', function(e) {
