@@ -52,7 +52,7 @@
                 enumerable: true,
                 value: function () {
                     if (this.tabsNavigation && this.displayListener) {
-                        this.tabsNavigation.removeEventListener(this.displayListener);
+                        this.tabsNavigation.removeEventListener('click', this.displayListener);
                         this.displayListener = null;
                     }
                 }
