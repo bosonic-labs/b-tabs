@@ -37,3 +37,22 @@ For now (a better API is coming soon), the first child of `<b-tabs>` must be an 
     </div>
 </b-tabs>
 ```
+
+### Events
+
+ * _b-tabs-willChange_ event is fired when the current tab is going to change.
+ * _b-tabs-hasChanged_ event is fired when the current tab has changed.
+  
+Both events contains a _detail_ property which contains target _tab_ and _content_ elements :
+
+```js
+document.querySelector('b-tabs').addEventListener('b-tabs-willChange', function(e) {
+    console.log('tab: '+e.detail.tab);
+    console.log('content: '+e.detail.content
+});
+
+document.querySelector('b-tabs').addEventListener('b-tabs-hasChanged', function(e) {
+    console.log('tab: '+e.detail.tab);
+    console.log('content: '+e.detail.content);
+});
+```

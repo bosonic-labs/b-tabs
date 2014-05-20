@@ -70,10 +70,18 @@
             displayTabAt: {
                 enumerable: true,
                 value: function (idx) {
+                    var detail = {
+                            'detail': {
+                                tab: this.tabsNavigation.children[idx],
+                                content: this.tabsContainer.children[idx]
+                            }
+                        };
+                    this.dispatchEvent(new CustomEvent('b-tabs-willChange', detail));
                     this.hideElement(this.displayedElementIdx);
                     this.displayedElementIdx = idx;
                     this.displayCurrentContent();
                     this.displayCurrentTab();
+                    this.dispatchEvent(new CustomEvent('b-tabs-hasChanged', detail));
                 }
             },
             displayCurrentContent: {

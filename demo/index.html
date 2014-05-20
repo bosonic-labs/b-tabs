@@ -29,6 +29,19 @@
             width: 50%;
             padding: 10px;
         }
+        #logs {
+            background: #333;
+            bottom: 0;
+            left: 0;
+            color: #EFEFEF;
+            font-family: 'courier new';
+            font-size: 13px;
+            height: 200px;
+            overflow: scroll;
+            padding: 20px 10px;
+            position: fixed;
+            width: 100%;
+        }
     </style>
     <b-tabs>
 		<ul>
@@ -51,8 +64,27 @@
 			</div>
 		</div>
 	</b-tabs>
-    
+    </div>
+    <div id="logs">
+
     <script type="text/javascript">
-        
+
+        var logs = document.getElementById('logs');
+
+        function eventCallback(eventName, detail) {
+            var newLog = document.createElement('div');
+            newLog.innerHTML = new Date()+' - '+eventName+' - tab: '+detail.tab+' - content: '+detail.content;
+            logs.appendChild(newLog);
+            logs.scrollTop = logs.scrollHeight;
+        }
+
+        window.addEventListener('WebComponentsReady', function() {
+            document.querySelector('b-tabs').addEventListener('b-tabs-willChange', function(e) {
+                eventCallback('b-tabs-willChange', e.detail);
+            });
+            document.querySelector('b-tabs').addEventListener('b-tabs-hasChanged', function(e) {
+                eventCallback('b-tabs-hasChanged', e.detail);
+            });
+        });
     </script>
 </body>
