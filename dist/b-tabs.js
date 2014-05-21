@@ -63,25 +63,26 @@
                     var li = this.findLi(e.target);
                     if (li) {
                         var toDisplayIdx = Array.prototype.indexOf.call(this.tabsNavigation.children, li);
+                        var CustomEventInit = {
+                                bubbles: true,
+                                detail: {
+                                    tab: this.tabsNavigation.children[toDisplayIdx],
+                                    content: this.tabsContainer.children[toDisplayIdx]
+                                }
+                            };
+                        this.dispatchEvent(new CustomEvent('b-tabs-willChange', CustomEventInit));
                         this.displayTabAt(toDisplayIdx);
+                        this.dispatchEvent(new CustomEvent('b-tabs-hasChanged', CustomEventInit));
                     }
                 }
             },
             displayTabAt: {
                 enumerable: true,
                 value: function (idx) {
-                    var detail = {
-                            'detail': {
-                                tab: this.tabsNavigation.children[idx],
-                                content: this.tabsContainer.children[idx]
-                            }
-                        };
-                    this.dispatchEvent(new CustomEvent('b-tabs-willChange', detail));
                     this.hideElement(this.displayedElementIdx);
                     this.displayedElementIdx = idx;
                     this.displayCurrentContent();
                     this.displayCurrentTab();
-                    this.dispatchEvent(new CustomEvent('b-tabs-hasChanged', detail));
                 }
             },
             displayCurrentContent: {

@@ -78,13 +78,11 @@
             logs.scrollTop = logs.scrollHeight;
         }
 
-        window.addEventListener('WebComponentsReady', function() {
-            document.querySelector('b-tabs').addEventListener('b-tabs-willChange', function(e) {
-                eventCallback('b-tabs-willChange', e.detail);
-            });
-            document.querySelector('b-tabs').addEventListener('b-tabs-hasChanged', function(e) {
-                eventCallback('b-tabs-hasChanged', e.detail);
-            });
+        document.addEventListener('b-tabs-willChange', function(e) {
+            eventCallback('b-tabs-willChange', e.detail);
+        });
+        document.addEventListener('b-tabs-hasChanged', function(e) {
+            eventCallback('b-tabs-hasChanged', e.detail);
         });
     </script>
 </body>

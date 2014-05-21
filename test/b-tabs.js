@@ -1,8 +1,6 @@
 var mouse = effroi.mouse;
 
-function createTabsList() {
-    var wrapper = document.createElement('div');
-    wrapper.setAttribute('id', 'b-tabs-wrapper');
+function createTabsList(wrapper) {
     wrapper.innerHTML = '<b-tabs><ul><li>tab1</li><li>tab2</li><li>tab3</li></ul><div class="content-wrapper"><div>content 1</div><div>content 2</div><div>content 3</div></div></b-tabs>';
     document.body.appendChild(wrapper);
     return document.querySelector('b-tabs');
@@ -11,16 +9,15 @@ function createTabsList() {
 describe("b-tabs", function() {
 
     beforeEach(function(done) {
-        this.tabs = createTabsList();
+        this.wrapper = document.createElement('div');
+        this.wrapper.setAttribute('id', 'b-tabs-wrapper');
+        this.tabs = createTabsList(this.wrapper);
         // Let the bosonic's callback happens
         setTimeout(function() { done();}, 100);
     });
 
-    afterEach(function(done) {
-        var wrapper = document.getElementById('b-tabs-wrapper');
-        document.body.removeChild(wrapper);
-        // Let the bosonic's callback happens
-        setTimeout(function() { done();}, 100);
+    afterEach(function() {
+        removeComponentFromBody.call(this);
     });
 
     describe("at startup", function() {
@@ -41,6 +38,52 @@ describe("b-tabs", function() {
         it("should hide all content expect the first one", function() {
             expect(contentIsHidden(this.tabs, 1)).to.be.true;
             expect(contentIsHidden(this.tabs, 2)).to.be.true;
+        });
+
+        it("should not fire the b-tabs-willChange event", function(done) {
+
+            // When
+            removeComponentFromBody.call(this);
+
+            var eventHasBeenFired = false;
+
+            var wrapper = document.createElement('div');
+            wrapper.setAttribute('id', 'b-tabs-wrapper');
+            wrapper.addEventListener('b-tabs-willChange', function() {
+                eventHasBeenFired = true;
+            });
+
+            // When
+            this.tabs = createTabsList(wrapper);
+
+            // Then
+            setTimeout(function() {
+                expect(eventHasBeenFired).to.be.false;
+                done();
+            }, 1000);
+        });
+
+        it("should not fire the b-tabs-hasChanged event", function(done) {
+
+            // When
+            removeComponentFromBody.call(this);
+
+            var eventHasBeenFired = false;
+
+            var wrapper = document.createElement('div');
+            wrapper.setAttribute('id', 'b-tabs-wrapper');
+            wrapper.addEventListener('b-tabs-hasChanged', function() {
+                eventHasBeenFired = true;
+            });
+
+            // When
+            this.tabs = createTabsList(wrapper);
+
+            // Then
+            setTimeout(function() {
+                expect(eventHasBeenFired).to.be.false;
+                done();
+            }, 1000);
         });
     });
 
@@ -83,7 +126,7 @@ describe("b-tabs", function() {
         it("should fire a 'b-tabs-willChange' event before the change", function(done) {
 
             // Then
-            this.tabs.addEventListener('b-tabs-willChange', function() {
+            this.wrapper.addEventListener('b-tabs-willChange', function() {
                 // Before the change, the first tab is still displayed
                 expect(tabIsVisible(this.tabs, 0)).to.be.true;
                 done();
@@ -96,7 +139,7 @@ describe("b-tabs", function() {
         it("should fire a 'b-tabs-hasChanged' event after the change", function(done) {
 
             // Then
-            this.tabs.addEventListener('b-tabs-hasChanged', function() {
+            this.wrapper.addEventListener('b-tabs-hasChanged', function() {
                 // After the change, the second tab is displayed
                 expect(tabIsVisible(this.tabs, 1)).to.be.true;
                 done();
@@ -109,7 +152,7 @@ describe("b-tabs", function() {
         it("'b-tabs-willChange' event shall contains the target elements", function(done) {
 
             // Then
-            this.tabs.addEventListener('b-tabs-willChange', function(e) {
+            this.wrapper.addEventListener('b-tabs-willChange', function(e) {
                 expect(e.detail.tab).to.be.equal(getNthTab(this.tabs, 1));
                 expect(e.detail.content).to.be.equal(getNthContent(this.tabs, 1));
                 done();
@@ -122,7 +165,7 @@ describe("b-tabs", function() {
         it("'b-tabs-hasChanged' event shall contains the target elements", function(done) {
 
             // Then
-            this.tabs.addEventListener('b-tabs-hasChanged', function(e) {
+            this.wrapper.addEventListener('b-tabs-hasChanged', function(e) {
                 expect(e.detail.tab).to.be.equal(getNthTab(this.tabs, 1));
                 expect(e.detail.content).to.be.equal(getNthContent(this.tabs, 1));
                 done();
@@ -137,6 +180,12 @@ describe("b-tabs", function() {
 });
 
 // ----- Helper functions ----- //
+
+function removeComponentFromBody() {
+    var wrapper = document.getElementById('b-tabs-wrapper');
+    document.body.removeChild(wrapper);
+    this.tabs = null;
+}
 
 function tabIsVisible(root, idx) {
     return !getNthTab(root, idx).classList.contains('b-tabs-hidden')
