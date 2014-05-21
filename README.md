@@ -38,7 +38,7 @@ For now (a better API is coming soon), the first child of `<b-tabs>` must be an 
 </b-tabs>
 ```
 
-The ```selected``` attribute indicates which tab is visible.
+The optional ```selected``` attribute indicates which tab is visible.
 
 ### Events
 
