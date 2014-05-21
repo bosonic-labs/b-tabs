@@ -17,7 +17,7 @@ Otherwise, you can download and include in your HTML file the builded CSS & JS f
 For now (a better API is coming soon), the first child of `<b-tabs>` must be an unordered list that will become the tabs, and the second child must be a `div` with as many children as you have tabs:
 
 ```html
-<b-tabs>
+<b-tabs selected="1">
     <ul>
         <li>Tab 1</li>
         <li>Tab 2</li>
@@ -37,6 +37,8 @@ For now (a better API is coming soon), the first child of `<b-tabs>` must be an 
     </div>
 </b-tabs>
 ```
+
+The ```selected``` attribute indicates which tab is visible.
 
 ### Events
 

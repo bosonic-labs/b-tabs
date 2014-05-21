@@ -1,7 +1,8 @@
 var mouse = effroi.mouse;
 
-function createTabsList(wrapper) {
-    wrapper.innerHTML = '<b-tabs><ul><li>tab1</li><li>tab2</li><li>tab3</li></ul><div class="content-wrapper"><div>content 1</div><div>content 2</div><div>content 3</div></div></b-tabs>';
+function createTabsList(wrapper, selected) {
+    var btabsMarkup = selected ? '<b-tabs selected="'+selected+'">' : '<b-tabs>';
+    wrapper.innerHTML = btabsMarkup+'<ul><li>tab1</li><li>tab2</li><li>tab3</li></ul><div class="content-wrapper"><div>content 1</div><div>content 2</div><div>content 3</div></div></b-tabs>';
     document.body.appendChild(wrapper);
     return document.querySelector('b-tabs');
 }
@@ -9,11 +10,7 @@ function createTabsList(wrapper) {
 describe("b-tabs", function() {
 
     beforeEach(function(done) {
-        this.wrapper = document.createElement('div');
-        this.wrapper.setAttribute('id', 'b-tabs-wrapper');
-        this.tabs = createTabsList(this.wrapper);
-        // Let the bosonic's callback happens
-        setTimeout(function() { done();}, 100);
+        appendComponentToBody.call(this, done);
     });
 
     afterEach(function() {
@@ -42,7 +39,7 @@ describe("b-tabs", function() {
 
         it("should not fire the b-tabs-willChange event", function(done) {
 
-            // When
+            // Given
             removeComponentFromBody.call(this);
 
             var eventHasBeenFired = false;
@@ -65,7 +62,7 @@ describe("b-tabs", function() {
 
         it("should not fire the b-tabs-hasChanged event", function(done) {
 
-            // When
+            // Given
             removeComponentFromBody.call(this);
 
             var eventHasBeenFired = false;
@@ -84,6 +81,31 @@ describe("b-tabs", function() {
                 expect(eventHasBeenFired).to.be.false;
                 done();
             }, 1000);
+        });
+
+        it("should display the selected tab if option is present", function(done) {
+            // Given
+            removeComponentFromBody.call(this);
+
+            // When
+            appendComponentToBody.call(this , function() {
+                // Then
+                expect(contentIsVisible(this.tabs, 1)).to.be.true;
+                done();
+            }.bind(this), 1);
+        });
+
+        it("should hide all tabs expect the selected one", function(done) {
+            // Given
+            removeComponentFromBody.call(this);
+
+            // When
+            appendComponentToBody.call(this, function() {
+                // Then
+                expect(tabIsHidden(this.tabs, 0)).to.be.true;
+                expect(tabIsHidden(this.tabs, 2)).to.be.true;
+                done();
+            }.bind(this), 1);
         });
     });
 
@@ -180,6 +202,14 @@ describe("b-tabs", function() {
 });
 
 // ----- Helper functions ----- //
+
+function appendComponentToBody(afterComponentAppendedCb, selected) {
+    this.wrapper = document.createElement('div');
+    this.wrapper.setAttribute('id', 'b-tabs-wrapper');
+    this.tabs = createTabsList(this.wrapper, selected);
+    // Let the bosonic's callback happens
+    setTimeout(afterComponentAppendedCb, 100);
+}
 
 function removeComponentFromBody() {
     var wrapper = document.getElementById('b-tabs-wrapper');

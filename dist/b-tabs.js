@@ -35,7 +35,8 @@
                         for (var i = 0; i < this.tabsContainer.children.length; i++) {
                             this.hideElement(i);
                         }
-                        this.displayTabAt(0);
+                        var selectedIndex = this.getAttribute('selected') || 0;
+                        this.displayTabAt(selectedIndex);
                     }
                 }
             },
