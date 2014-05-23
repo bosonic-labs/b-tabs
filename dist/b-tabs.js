@@ -101,6 +101,7 @@
                     if (this.displayedElementIdx < this.tabsNavigation.children.length) {
                         var elementToDisplay = this.tabsNavigation.children[this.displayedElementIdx];
                         elementToDisplay.classList.remove('b-tabs-hidden');
+                        elementToDisplay.classList.add('b-tabs-visible');
                     }
                 }
             },
@@ -125,6 +126,7 @@
                 value: function (idx) {
                     var elementToHide = this.tabsNavigation.children[idx];
                     elementToHide.classList.add('b-tabs-hidden');
+                    elementToHide.classList.remove('b-tabs-visible');
                 }
             },
             findLi: {

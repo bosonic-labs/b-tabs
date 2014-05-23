@@ -218,11 +218,13 @@ function removeComponentFromBody() {
 }
 
 function tabIsVisible(root, idx) {
-    return !getNthTab(root, idx).classList.contains('b-tabs-hidden')
+    var tab = getNthTab(root, idx);
+    return !tab.classList.contains('b-tabs-hidden') && tab.classList.contains('b-tabs-visible');
 }
 
 function tabIsHidden(root, idx) {
-    return getNthTab(root, idx).classList.contains('b-tabs-hidden')
+    var tab = getNthTab(root, idx);
+    return tab.classList.contains('b-tabs-hidden') && !tab.classList.contains('b-tabs-visible');
 }
 
 function getNthTab(root, idx) {
