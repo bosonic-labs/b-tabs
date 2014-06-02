@@ -18,10 +18,13 @@
         }
     </style>
     <template>
-        
+
     </template>
     <script>
         ({
+            get selectedIndex() {
+                return this.getAttribute('selected') || 0;
+            },
         	// ---- Component lifecycle ---- //
 
             createdCallback: function() {
@@ -29,7 +32,7 @@
 
                 this.tabsNavigation = this.querySelector('ul');
                 this.tabsContainer = this.querySelector('div');
-                
+
                 this.initClasses();
                 this.initContainer();
                 this.addListeners();
@@ -55,8 +58,7 @@
                     for (var i = 0; i<this.tabsContainer.children.length; i++) {
                         this.hideElement(i);
                     }
-                    var selectedIndex = this.getAttribute('selected') || 0;
-                    this.displayTabAt(selectedIndex);
+                    this.displayTabAt(this.selectedIndex);
                 }
             },
 
