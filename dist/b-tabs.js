@@ -1,5 +1,11 @@
 (function () {
     var BTabsPrototype = Object.create(HTMLElement.prototype, {
+            selectedIndex: {
+                enumerable: true,
+                get: function () {
+                    return this.getAttribute('selected') || 0;
+                }
+            },
             createdCallback: {
                 enumerable: true,
                 value: function () {
@@ -32,11 +38,11 @@
                 enumerable: true,
                 value: function () {
                     if (this.tabsContainer) {
-                        for (var i = 0; i < this.tabsContainer.children.length; i++) {
-                            this.hideElement(i);
-                        }
-                        var selectedIndex = this.getAttribute('selected') || 0;
-                        this.displayTabAt(selectedIndex);
+                        var allLis = this.tabsNavigation.querySelectorAll('li[data-target]');
+                        Array.prototype.forEach.call(allLis, function (li) {
+                            this.hideElement(li);
+                        }.bind(this));
+                        this.displayTab(allLis[this.selectedIndex]);
                     }
                 }
             },
@@ -63,25 +69,25 @@
                 value: function (e) {
                     var li = this.findLi(e.target);
                     if (li) {
-                        var toDisplayIdx = Array.prototype.indexOf.call(this.tabsNavigation.children, li);
+                        var contentToDisplay = this.querySelector(li.getAttribute('data-target'));
                         var CustomEventInit = {
                                 bubbles: true,
                                 detail: {
-                                    tab: this.tabsNavigation.children[toDisplayIdx],
-                                    content: this.tabsContainer.children[toDisplayIdx]
+                                    tab: li,
+                                    content: contentToDisplay
                                 }
                             };
                         this.dispatchEvent(new CustomEvent('b-tabs-willChange', CustomEventInit));
-                        this.displayTabAt(toDisplayIdx);
+                        this.displayTab(li);
                         this.dispatchEvent(new CustomEvent('b-tabs-hasChanged', CustomEventInit));
                     }
                 }
             },
-            displayTabAt: {
+            displayTab: {
                 enumerable: true,
-                value: function (idx) {
-                    this.hideElement(this.displayedElementIdx);
-                    this.displayedElementIdx = idx;
+                value: function (li) {
+                    this.hideElement(this.displayedLi);
+                    this.displayedLi = li;
                     this.displayCurrentContent();
                     this.displayCurrentTab();
                 }
@@ -89,44 +95,38 @@
             displayCurrentContent: {
                 enumerable: true,
                 value: function () {
-                    if (this.displayedElementIdx < this.tabsContainer.children.length) {
-                        var elementToDisplay = this.tabsContainer.children[this.displayedElementIdx];
-                        elementToDisplay.classList.remove('b-tabs-hidden');
-                    }
+                    var contentToDisplay = this.querySelector(this.displayedLi.getAttribute('data-target'));
+                    contentToDisplay.classList.remove('b-tabs-hidden');
                 }
             },
             displayCurrentTab: {
                 enumerable: true,
                 value: function () {
-                    if (this.displayedElementIdx < this.tabsNavigation.children.length) {
-                        var elementToDisplay = this.tabsNavigation.children[this.displayedElementIdx];
-                        elementToDisplay.classList.remove('b-tabs-hidden');
-                        elementToDisplay.classList.add('b-tabs-visible');
-                    }
+                    this.displayedLi.classList.remove('b-tabs-hidden');
+                    this.displayedLi.classList.add('b-tabs-visible');
                 }
             },
             hideElement: {
                 enumerable: true,
-                value: function (idx) {
-                    if (idx !== undefined) {
-                        this.hideContent(idx);
-                        this.hideTab(idx);
+                value: function (li) {
+                    if (li) {
+                        this.hideContent(li);
+                        this.hideTab(li);
                     }
                 }
             },
             hideContent: {
                 enumerable: true,
-                value: function (idx) {
-                    var elementToHide = this.tabsContainer.children[idx];
+                value: function (li) {
+                    var elementToHide = this.querySelector(li.getAttribute('data-target'));
                     elementToHide.classList.add('b-tabs-hidden');
                 }
             },
             hideTab: {
                 enumerable: true,
-                value: function (idx) {
-                    var elementToHide = this.tabsNavigation.children[idx];
-                    elementToHide.classList.add('b-tabs-hidden');
-                    elementToHide.classList.remove('b-tabs-visible');
+                value: function (li) {
+                    li.classList.add('b-tabs-hidden');
+                    li.classList.remove('b-tabs-visible');
                 }
             },
             findLi: {
@@ -135,7 +135,7 @@
                     var currentNode = target;
                     var li = null;
                     while (currentNode.tagName !== 'B-TABS' && li === null) {
-                        if (currentNode.tagName === 'LI')
+                        if (currentNode.tagName === 'LI' && currentNode.getAttribute('data-target'))
                             li = currentNode;
                         currentNode = currentNode.parentNode;
                     }

@@ -1,16 +1,9 @@
 var mouse = effroi.mouse;
 
-function createTabsList(wrapper, selected) {
-    var btabsMarkup = selected ? '<b-tabs selected="'+selected+'">' : '<b-tabs>';
-    wrapper.innerHTML = btabsMarkup+'<ul><li>tab1</li><li>tab2</li><li>tab3</li></ul><div class="content-wrapper"><div>content 1</div><div>content 2</div><div>content 3</div></div></b-tabs>';
-    document.body.appendChild(wrapper);
-    return document.querySelector('b-tabs');
-}
-
 describe("b-tabs", function() {
 
     beforeEach(function(done) {
-        appendComponentToBody.call(this, done);
+        appendComponentToBody.call(this, createBasicTabsList, done);
     });
 
     afterEach(function() {
@@ -51,7 +44,7 @@ describe("b-tabs", function() {
             });
 
             // When
-            this.tabs = createTabsList(wrapper);
+            this.tabs = createBasicTabsList(wrapper);
 
             // Then
             setTimeout(function() {
@@ -74,7 +67,7 @@ describe("b-tabs", function() {
             });
 
             // When
-            this.tabs = createTabsList(wrapper);
+            this.tabs = createBasicTabsList(wrapper);
 
             // Then
             setTimeout(function() {
@@ -88,7 +81,7 @@ describe("b-tabs", function() {
             removeComponentFromBody.call(this);
 
             // When
-            appendComponentToBody.call(this , function() {
+            appendComponentToBody.call(this, createBasicTabsList, function() {
                 // Then
                 expect(contentIsVisible(this.tabs, 1)).to.be.true;
                 done();
@@ -100,12 +93,28 @@ describe("b-tabs", function() {
             removeComponentFromBody.call(this);
 
             // When
-            appendComponentToBody.call(this, function() {
+            appendComponentToBody.call(this, createBasicTabsList, function() {
                 // Then
                 expect(tabIsHidden(this.tabs, 0)).to.be.true;
                 expect(tabIsHidden(this.tabs, 2)).to.be.true;
                 done();
             }.bind(this), 1);
+        });
+    });
+
+    describe("with an unordered list", function() {
+
+        beforeEach(function(done) {
+            removeComponentFromBody.call(this);
+            appendComponentToBody.call(this, createBasicUnorderedTabsList, done);
+        });
+
+        it("should display the first tab", function() {
+            expect(tabIsVisible(this.tabs, 0)).to.be.true;
+        });
+
+        it("should display the second content when linked with first tab", function() {
+            expect(contentIsVisible(this.tabs, 1)).to.be.true;
         });
     });
 
@@ -199,14 +208,142 @@ describe("b-tabs", function() {
 
     });
 
+    describe("when having a action tab", function() {
+
+        beforeEach(function(done) {
+            removeComponentFromBody.call(this);
+            appendComponentToBody.call(this, createTabsListWithAction, done);
+        });
+
+        it("should display the first tab", function() {
+            expect(tabIsVisible(this.tabs, 0)).to.be.true;
+        });
+
+        it("should not change the active tab when the action tab is clicked", function() {
+
+            // When
+            mouse.click(getNthTab(this.tabs, 2));
+
+            // Then
+            expect(tabIsVisible(this.tabs, 0)).to.be.true;
+        });
+
+    });
+
+    describe("when having a action tab between li", function() {
+
+        beforeEach(function(done) {
+            removeComponentFromBody.call(this);
+            appendComponentToBody.call(this, createTabsListWithActionBetweenLi, done);
+        });
+
+        it("should display the first tab", function() {
+            expect(tabIsVisible(this.tabs, 0)).to.be.true;
+        });
+
+        it("should not change the active tab when the action tab is clicked", function() {
+
+            // When
+            mouse.click(getNthTab(this.tabs, 1));
+
+            // Then
+            expect(tabIsVisible(this.tabs, 0)).to.be.true;
+        });
+
+        it("should display the second content when the third tab is clicked", function() {
+
+            // When
+            mouse.click(getNthTab(this.tabs, 2));
+
+            // Then
+            expect(contentIsVisible(this.tabs, 1)).to.be.true;
+        });
+
+        it("should display select the third tab when clicked", function() {
+
+            // When
+            mouse.click(getNthTab(this.tabs, 2));
+
+            // Then
+            expect(tabIsVisible(this.tabs, 2)).to.be.true;
+        });
+
+    });
+
 });
 
 // ----- Helper functions ----- //
 
-function appendComponentToBody(afterComponentAppendedCb, selected) {
+
+function createTabsList(wrapper, selected, contentMarkup) {
+    var btabsMarkup = selected ? '<b-tabs selected="'+selected+'">' : '<b-tabs>';
+    wrapper.innerHTML = btabsMarkup + contentMarkup + '</b-tabs>';
+    document.body.appendChild(wrapper);
+    return document.querySelector('b-tabs');
+}
+
+function createBasicTabsList(wrapper, selected) {
+    var contentMarkup = '<ul>' +
+        '<li data-target="#one">tab1</li>' +
+        '<li data-target="#two">tab2</li>' +
+        '<li data-target="#three">tab3</li>' +
+        '</ul>' +
+        '<div class="content-wrapper">' +
+        '<div id="one">content 1</div>' +
+        '<div id="two">content 2</div>' +
+        '<div id="three">content 3</div>' +
+        '</div>';
+
+    return createTabsList(wrapper, selected, contentMarkup);
+}
+
+function createBasicUnorderedTabsList(wrapper, selected) {
+    var contentMarkup = '<ul>' +
+        '<li data-target="#one">tab1</li>' +
+        '<li data-target="#two">tab2</li>' +
+        '<li data-target="#three">tab3</li>' +
+        '</ul>' +
+        '<div class="content-wrapper">' +
+        '<div id="two">content 2</div>' +
+        '<div id="one">content 1</div>' +
+        '<div id="three">content 3</div>' +
+        '</div>';
+
+    return createTabsList(wrapper, selected, contentMarkup);
+}
+
+function createTabsListWithAction(wrapper, selected) {
+    var contentMarkup = '<ul>' +
+        '<li data-target="#one">tab1</li>' +
+        '<li data-target="#two">tab2</li>' +
+        '<li>Action</li>' +
+        '</ul>' +
+        '<div class="content-wrapper">' +
+        '<div id="one">content 1</div>' +
+        '<div id="two">content 2</div>' +
+        '</div>';
+
+    return createTabsList(wrapper, selected, contentMarkup);
+}
+
+function createTabsListWithActionBetweenLi(wrapper, selected) {
+    var contentMarkup = '<ul>' +
+        '<li data-target="#one">tab1</li>' +
+        '<li>Action</li>' +
+        '<li data-target="#two">tab2</li>' +
+        '</ul>' +
+        '<div class="content-wrapper">' +
+        '<div id="one">content 1</div>' +
+        '<div id="two">content 2</div>' +
+        '</div>';
+
+    return createTabsList(wrapper, selected, contentMarkup);
+}
+
+function appendComponentToBody(tabsAppender, afterComponentAppendedCb, selected) {
     this.wrapper = document.createElement('div');
     this.wrapper.setAttribute('id', 'b-tabs-wrapper');
-    this.tabs = createTabsList(this.wrapper, selected);
+    this.tabs = tabsAppender(this.wrapper, selected);
     // Let the bosonic's callback happens
     setTimeout(afterComponentAppendedCb, 100);
 }

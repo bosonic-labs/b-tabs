@@ -14,13 +14,13 @@
             margin: 0;
             margin-bottom: 4px;
         }
-        .b-tabs-navigation li {
+        .b-tabs-navigation li[data-target] {
             background: #fff;
             border: 1px solid #ccc;
             border-bottom: 1px solid #fff;
             padding: 5px;
         }
-        .b-tabs-navigation li.b-tabs-hidden {
+        .b-tabs-navigation li[data-target].b-tabs-hidden {
             background: #ddd;
             border-bottom: 1px solid #ccc;
         }
@@ -45,21 +45,24 @@
     </style>
     <b-tabs selected="1">
 		<ul>
-			<li>Tab 1</li>
-			<li>Tab 2</li>
-			<li>Tab 3</li>
+			<li data-target="#one">Tab 1</li>
+			<li data-target="#two">Tab 2</li>
+            <li>/</li>
+			<li data-target="#three">Tab 3</li>
+			<li>+</li>
 		</ul>
 		
 		<div>
-			<div>
-				Lorem ipsum dolor sit amet, consectetur adipisicing elit. Rerum, nobis, beatae facere voluptates esse cupiditate sit laboriosam veniam quis facilis laborum distinctio nam ex incidunt architecto molestias eligendi optio? Sunt?
-			</div>
-
-			<div>
+			<div id="two">
 				Iste, reiciendis expedita officiis sequi suscipit neque ipsa! Architecto, repellendus, quam totam aliquid voluptates consequatur alias aspernatur temporibus amet dicta a modi optio nesciunt. Dicta, voluptatum in veniam consectetur vero.
 			</div>
 
-			<div>
+			<div id="one">
+				Lorem ipsum dolor sit amet, consectetur adipisicing elit. Rerum, nobis, beatae facere voluptates esse cupiditate sit laboriosam veniam quis facilis laborum distinctio nam ex incidunt architecto molestias eligendi optio? Sunt?
+			</div>
+
+
+			<div id="three">
 				Nisi, ipsum fuga nostrum alias quidem deleniti dignissimos provident veniam culpa optio! Soluta, consequatur, minus corporis dolor repellat non at aperiam error nesciunt reiciendis! Omnis vitae itaque quas nostrum molestiae.
 			</div>
 		</div>
