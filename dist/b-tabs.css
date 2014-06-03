@@ -11,6 +11,6 @@ b-tabs .b-tabs-navigation li:hover {
   cursor: pointer;
 }
 
-b-tabs .b-tabs-hidden {
+.b-tabs-hidden {
   display: none;
 }

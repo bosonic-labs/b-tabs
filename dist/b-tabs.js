@@ -11,10 +11,18 @@
                 value: function () {
                     this.appendChild(this.template.content.cloneNode(true));
                     this.tabsNavigation = this.querySelector('ul');
-                    this.tabsContainer = this.querySelector('div');
-                    this.initClasses();
-                    this.initContainer();
+                    this.init();
                     this.addListeners();
+                }
+            },
+            childListChangedCallback: {
+                enumerable: true,
+                value: function (removedNodes, addedNodes) {
+                    console.log('childListChangedCallback');
+                    if (addedNodes) {
+                        console.log('addedNodes.length' + addedNodes.length);
+                        Array.prototype.filter.call(addedNodes, this.nodeIsATab).forEach(this.hideElement.bind(this));
+                    }
                 }
             },
             detachedCallback: {
@@ -23,21 +31,11 @@
                     this.removeListeners();
                 }
             },
-            initClasses: {
+            init: {
                 enumerable: true,
                 value: function () {
                     if (this.tabsNavigation) {
                         this.tabsNavigation.classList.add('b-tabs-navigation');
-                    }
-                    if (this.tabsContainer) {
-                        this.tabsContainer.classList.add('b-tabs-container');
-                    }
-                }
-            },
-            initContainer: {
-                enumerable: true,
-                value: function () {
-                    if (this.tabsContainer) {
                         var allLis = this.tabsNavigation.querySelectorAll('li[data-target]');
                         Array.prototype.forEach.call(allLis, function (li) {
                             this.hideElement(li);
@@ -69,7 +67,7 @@
                 value: function (e) {
                     var li = this.findLi(e.target);
                     if (li) {
-                        var contentToDisplay = this.querySelector(li.getAttribute('data-target'));
+                        var contentToDisplay = document.querySelector(li.getAttribute('data-target'));
                         var CustomEventInit = {
                                 bubbles: true,
                                 detail: {
@@ -95,7 +93,7 @@
             displayCurrentContent: {
                 enumerable: true,
                 value: function () {
-                    var contentToDisplay = this.querySelector(this.displayedLi.getAttribute('data-target'));
+                    var contentToDisplay = document.querySelector(this.displayedLi.getAttribute('data-target'));
                     contentToDisplay.classList.remove('b-tabs-hidden');
                 }
             },
@@ -118,7 +116,7 @@
             hideContent: {
                 enumerable: true,
                 value: function (li) {
-                    var elementToHide = this.querySelector(li.getAttribute('data-target'));
+                    var elementToHide = document.body.querySelector(li.getAttribute('data-target'));
                     elementToHide.classList.add('b-tabs-hidden');
                 }
             },
@@ -135,11 +133,17 @@
                     var currentNode = target;
                     var li = null;
                     while (currentNode.tagName !== 'B-TABS' && li === null) {
-                        if (currentNode.tagName === 'LI' && currentNode.getAttribute('data-target'))
+                        if (this.nodeIsATab(currentNode))
                             li = currentNode;
                         currentNode = currentNode.parentNode;
                     }
                     return li;
+                }
+            },
+            nodeIsATab: {
+                enumerable: true,
+                value: function (node) {
+                    return node.tagName === 'LI' && node.getAttribute('data-target');
                 }
             }
         });

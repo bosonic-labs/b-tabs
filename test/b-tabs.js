@@ -21,13 +21,13 @@ describe("b-tabs", function() {
             expect(tabIsHidden(this.tabs, 2)).to.be.true;
         });
 
-        it("should display the first content", function() {
-            expect(contentIsVisible(this.tabs, 0)).to.be.true;
+        it("should display the content targeted by the first tab", function() {
+            expect(contentIsVisible("#one")).to.be.true;
         });
 
-        it("should hide all content expect the first one", function() {
-            expect(contentIsHidden(this.tabs, 1)).to.be.true;
-            expect(contentIsHidden(this.tabs, 2)).to.be.true;
+        it("should hide all contents not targeted by the first tab", function() {
+            expect(contentIsHidden("#two")).to.be.true;
+            expect(contentIsHidden("#three")).to.be.true;
         });
 
         it("should not fire the b-tabs-willChange event", function(done) {
@@ -83,7 +83,7 @@ describe("b-tabs", function() {
             // When
             appendComponentToBody.call(this, createBasicTabsList, function() {
                 // Then
-                expect(contentIsVisible(this.tabs, 1)).to.be.true;
+                expect(contentIsVisible("#two")).to.be.true;
                 done();
             }.bind(this), 1);
         });
@@ -99,22 +99,6 @@ describe("b-tabs", function() {
                 expect(tabIsHidden(this.tabs, 2)).to.be.true;
                 done();
             }.bind(this), 1);
-        });
-    });
-
-    describe("with an unordered list", function() {
-
-        beforeEach(function(done) {
-            removeComponentFromBody.call(this);
-            appendComponentToBody.call(this, createBasicUnorderedTabsList, done);
-        });
-
-        it("should display the first tab", function() {
-            expect(tabIsVisible(this.tabs, 0)).to.be.true;
-        });
-
-        it("should display the second content when linked with first tab", function() {
-            expect(contentIsVisible(this.tabs, 1)).to.be.true;
         });
     });
 
@@ -137,21 +121,21 @@ describe("b-tabs", function() {
             expect(tabIsHidden(this.tabs, 2)).to.be.true;
         });
 
-        it("should display the second content", function() {
+        it("should display content targeted by the second tab", function() {
             // When
             mouse.click(this.tabs.querySelectorAll('li')[1]);
 
             // Then
-            expect(contentIsVisible(this.tabs, 1)).to.be.true;
+            expect(contentIsVisible("#two")).to.be.true;
         });
 
-        it("should hide the first and second content", function() {
+        it("should hide all contents not targeted by the second tab", function() {
             // When
             mouse.click(this.tabs.querySelectorAll('li')[1]);
 
             // Then
-            expect(contentIsHidden(this.tabs, 0)).to.be.true;
-            expect(contentIsHidden(this.tabs, 2)).to.be.true;
+            expect(contentIsHidden("#one")).to.be.true;
+            expect(contentIsHidden("#three")).to.be.true;
         });
 
         it("should fire a 'b-tabs-willChange' event before the change", function(done) {
@@ -185,7 +169,7 @@ describe("b-tabs", function() {
             // Then
             this.wrapper.addEventListener('b-tabs-willChange', function(e) {
                 expect(e.detail.tab).to.be.equal(getNthTab(this.tabs, 1));
-                expect(e.detail.content).to.be.equal(getNthContent(this.tabs, 1));
+                expect(e.detail.content).to.be.equal(document.querySelector('#two'));
                 done();
             }.bind(this));
 
@@ -198,7 +182,7 @@ describe("b-tabs", function() {
             // Then
             this.wrapper.addEventListener('b-tabs-hasChanged', function(e) {
                 expect(e.detail.tab).to.be.equal(getNthTab(this.tabs, 1));
-                expect(e.detail.content).to.be.equal(getNthContent(this.tabs, 1));
+                expect(e.detail.content).to.be.equal(document.querySelector('#two'));
                 done();
             }.bind(this));
 
@@ -250,16 +234,16 @@ describe("b-tabs", function() {
             expect(tabIsVisible(this.tabs, 0)).to.be.true;
         });
 
-        it("should display the second content when the third tab is clicked", function() {
+        it("should display the content targeted by the third tab when it is clicked", function() {
 
             // When
             mouse.click(getNthTab(this.tabs, 2));
 
             // Then
-            expect(contentIsVisible(this.tabs, 1)).to.be.true;
+            expect(contentIsVisible("#two")).to.be.true;
         });
 
-        it("should display select the third tab when clicked", function() {
+        it("should display the third tab when clicked", function() {
 
             // When
             mouse.click(getNthTab(this.tabs, 2));
@@ -270,74 +254,84 @@ describe("b-tabs", function() {
 
     });
 
+
+    describe.skip("When adding a tab to an existing b-tabs", function() {
+
+        beforeEach(function() {
+            var $ul = this.tabs.querySelector('ul');
+            var $li = document.createElement('li');
+            $li.setAttribute('data-target', '#four');
+            $li.innerHTML = 'tab4';
+            $ul.appendChild($li);
+
+            var $content = this.tabs.querySelector('div');
+            var $newDiv = document.createElement('div');
+            $newDiv.setAttribute('id', 'four');
+            $newDiv.innerHTML = 'content 4';
+            $content.appendChild($newDiv);
+        });
+
+        it("should not select the new tab", function() {
+            expect(tabIsHidden(this.tabs, 3)).to.be.true;
+        });
+
+        it("should hide the new content", function() {
+            expect(contentIsHidden(document.querySelector('#four'))).to.be.true;
+        });
+
+    });
 });
 
 // ----- Helper functions ----- //
 
 
-function createTabsList(wrapper, selected, contentMarkup) {
+function createTabsList(wrapper, selected, tabsMarkup, contentMarkup) {
     var btabsMarkup = selected ? '<b-tabs selected="'+selected+'">' : '<b-tabs>';
-    wrapper.innerHTML = btabsMarkup + contentMarkup + '</b-tabs>';
     document.body.appendChild(wrapper);
-    return document.querySelector('b-tabs');
+    wrapper.innerHTML = btabsMarkup + tabsMarkup + '</b-tabs>' + contentMarkup;
+    // TODO vraiment nécessaire de retourner un paramètre ?
+    return wrapper;
 }
 
 function createBasicTabsList(wrapper, selected) {
-    var contentMarkup = '<ul>' +
-        '<li data-target="#one">tab1</li>' +
-        '<li data-target="#two">tab2</li>' +
-        '<li data-target="#three">tab3</li>' +
-        '</ul>' +
-        '<div class="content-wrapper">' +
-        '<div id="one">content 1</div>' +
-        '<div id="two">content 2</div>' +
-        '<div id="three">content 3</div>' +
-        '</div>';
+    var tabsMarkup = '<ul><li data-target="#one">tab1</li>' +
+                     '<li data-target="#two">tab2</li>' +
+                     '<li data-target="#three">tab3</li></ul>';
 
-    return createTabsList(wrapper, selected, contentMarkup);
-}
 
-function createBasicUnorderedTabsList(wrapper, selected) {
-    var contentMarkup = '<ul>' +
-        '<li data-target="#one">tab1</li>' +
-        '<li data-target="#two">tab2</li>' +
-        '<li data-target="#three">tab3</li>' +
-        '</ul>' +
-        '<div class="content-wrapper">' +
-        '<div id="two">content 2</div>' +
-        '<div id="one">content 1</div>' +
-        '<div id="three">content 3</div>' +
-        '</div>';
+    var contentMarkup = '<div id="one">content 1</div>' +
+                        '<div id="two">content 2</div>' +
+                        '<div id="three">content 3</div>';
 
-    return createTabsList(wrapper, selected, contentMarkup);
+    return createTabsList(wrapper, selected, tabsMarkup, contentMarkup);
 }
 
 function createTabsListWithAction(wrapper, selected) {
-    var contentMarkup = '<ul>' +
+    var tabsMarkup = '<ul>' +
         '<li data-target="#one">tab1</li>' +
         '<li data-target="#two">tab2</li>' +
         '<li>Action</li>' +
-        '</ul>' +
-        '<div class="content-wrapper">' +
-        '<div id="one">content 1</div>' +
-        '<div id="two">content 2</div>' +
-        '</div>';
+        '</ul>';
 
-    return createTabsList(wrapper, selected, contentMarkup);
+
+    var contentMarkup = '<div id="one">content 1</div>' +
+        '<div id="two">content 2</div>';
+
+    return createTabsList(wrapper, selected, tabsMarkup, contentMarkup);
 }
 
 function createTabsListWithActionBetweenLi(wrapper, selected) {
-    var contentMarkup = '<ul>' +
+    var tabsMarkup = '<ul>' +
         '<li data-target="#one">tab1</li>' +
         '<li>Action</li>' +
         '<li data-target="#two">tab2</li>' +
-        '</ul>' +
-        '<div class="content-wrapper">' +
-        '<div id="one">content 1</div>' +
-        '<div id="two">content 2</div>' +
-        '</div>';
+        '</ul>';
 
-    return createTabsList(wrapper, selected, contentMarkup);
+
+    var contentMarkup = '<div id="one">content 1</div>' +
+        '<div id="two">content 2</div>';
+
+    return createTabsList(wrapper, selected, tabsMarkup, contentMarkup);
 }
 
 function appendComponentToBody(tabsAppender, afterComponentAppendedCb, selected) {
@@ -368,14 +362,10 @@ function getNthTab(root, idx) {
     return root.querySelectorAll('li')[idx];
 }
 
-function contentIsVisible(root, idx) {
-    return !getNthContent(root, idx).classList.contains('b-tabs-hidden');
+function contentIsVisible(selector) {
+    return !document.querySelector(selector).classList.contains('b-tabs-hidden');
 }
 
-function contentIsHidden(root, idx) {
-    return getNthContent(root, idx).classList.contains('b-tabs-hidden');
-}
-
-function getNthContent(root, idx) {
-    return root.querySelector('.content-wrapper').querySelectorAll('div')[idx];
+function contentIsHidden( selector) {
+    return document.querySelector(selector).classList.contains('b-tabs-hidden');
 }

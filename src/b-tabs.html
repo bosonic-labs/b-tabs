@@ -13,7 +13,7 @@
             cursor: pointer;
         }
 
-        b-tabs .b-tabs-hidden {
+        .b-tabs-hidden {
             display: none;
         }
     </style>
@@ -31,11 +31,19 @@
                 this.appendChild(this.template.content.cloneNode(true));
 
                 this.tabsNavigation = this.querySelector('ul');
-                this.tabsContainer = this.querySelector('div');
 
-                this.initClasses();
-                this.initContainer();
+                this.init();
                 this.addListeners();
+            },
+
+            childListChangedCallback: function(removedNodes, addedNodes) {
+                console.log('childListChangedCallback');
+                if(addedNodes) {
+                    console.log('addedNodes.length'+addedNodes.length);
+                    Array.prototype
+                            .filter.call(addedNodes, this.nodeIsATab)
+                            .forEach(this.hideElement.bind(this));
+                }
             },
 
             detachedCallback: function() {
@@ -44,17 +52,9 @@
 
             // ---- Internal API ---- //
 
-            initClasses: function() {
+            init: function() {
                 if (this.tabsNavigation) {
                     this.tabsNavigation.classList.add('b-tabs-navigation');
-                }
-                if (this.tabsContainer) {
-                    this.tabsContainer.classList.add('b-tabs-container');
-                }
-            },
-
-            initContainer: function() {
-                if (this.tabsContainer) {
 
                     var allLis = this.tabsNavigation.querySelectorAll('li[data-target]');
 
@@ -83,7 +83,7 @@
             display: function(e) {
                 var li = this.findLi(e.target);
                 if (li) {
-                    var contentToDisplay = this.querySelector(li.getAttribute('data-target'));
+                    var contentToDisplay = document.querySelector(li.getAttribute('data-target'));
                     var CustomEventInit = {
                         bubbles: true,
                         detail: {
@@ -105,7 +105,7 @@
             },
 
             displayCurrentContent: function() {
-                var contentToDisplay = this.querySelector(this.displayedLi.getAttribute('data-target'));
+                var contentToDisplay = document.querySelector(this.displayedLi.getAttribute('data-target'));
                 contentToDisplay.classList.remove('b-tabs-hidden');
             },
 
@@ -123,7 +123,7 @@
             },
 
             hideContent: function(li) {
-                var elementToHide = this.querySelector(li.getAttribute('data-target'));
+                var elementToHide = document.body.querySelector(li.getAttribute('data-target'));
                 elementToHide.classList.add('b-tabs-hidden');
             },
 
@@ -137,13 +137,17 @@
                 var li = null;
 
                 while (currentNode.tagName !== 'B-TABS' && li === null) {
-                    if (currentNode.tagName === 'LI' && currentNode.getAttribute('data-target'))
+                    if (this.nodeIsATab(currentNode))
                         li = currentNode;
 
                     currentNode = currentNode.parentNode;
                 }
 
                 return li;
+            },
+
+            nodeIsATab: function(node) {
+                return node.tagName === 'LI' && node.getAttribute('data-target');
             }
 
         });

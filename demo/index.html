@@ -24,7 +24,7 @@
             background: #ddd;
             border-bottom: 1px solid #ccc;
         }
-        .b-tabs-container {
+        .content-wrapper {
             border: 1px solid #ccc;
             width: 50%;
             padding: 10px;
@@ -43,6 +43,8 @@
             width: 100%;
         }
     </style>
+
+    <!-- Tabs -->
     <b-tabs selected="1">
 		<ul>
 			<li data-target="#one">Tab 1</li>
@@ -51,23 +53,22 @@
 			<li data-target="#three">Tab 3</li>
 			<li>+</li>
 		</ul>
-		
-		<div>
-			<div id="two">
-				Iste, reiciendis expedita officiis sequi suscipit neque ipsa! Architecto, repellendus, quam totam aliquid voluptates consequatur alias aspernatur temporibus amet dicta a modi optio nesciunt. Dicta, voluptatum in veniam consectetur vero.
-			</div>
-
-			<div id="one">
-				Lorem ipsum dolor sit amet, consectetur adipisicing elit. Rerum, nobis, beatae facere voluptates esse cupiditate sit laboriosam veniam quis facilis laborum distinctio nam ex incidunt architecto molestias eligendi optio? Sunt?
-			</div>
-
-
-			<div id="three">
-				Nisi, ipsum fuga nostrum alias quidem deleniti dignissimos provident veniam culpa optio! Soluta, consequatur, minus corporis dolor repellat non at aperiam error nesciunt reiciendis! Omnis vitae itaque quas nostrum molestiae.
-			</div>
-		</div>
 	</b-tabs>
+
+    <!-- Contents -->
+    <div class="content-wrapper">
+        <div id="one">
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Rerum, nobis, beatae facere voluptates esse cupiditate sit laboriosam veniam quis facilis laborum distinctio nam ex incidunt architecto molestias eligendi optio? Sunt?
+        </div>
+        <div id="two">
+            Iste, reiciendis expedita officiis sequi suscipit neque ipsa! Architecto, repellendus, quam totam aliquid voluptates consequatur alias aspernatur temporibus amet dicta a modi optio nesciunt. Dicta, voluptatum in veniam consectetur vero.
+        </div>
+        <div id="three">
+            Nisi, ipsum fuga nostrum alias quidem deleniti dignissimos provident veniam culpa optio! Soluta, consequatur, minus corporis dolor repellat non at aperiam error nesciunt reiciendis! Omnis vitae itaque quas nostrum molestiae.
+        </div>
     </div>
+
+    <!-- Logs -->
     <div id="logs">
 
     <script type="text/javascript">
