@@ -18,7 +18,6 @@
                 enumerable: true,
                 value: function (removedNodes, addedNodes) {
                     if (addedNodes) {
-                        console.log('addedNodes.length' + addedNodes.length);
                         Array.prototype.filter.call(addedNodes, this.nodeIsATab).forEach(this.hideElement.bind(this));
                     }
                 }
@@ -60,7 +59,7 @@
                 value: function (e) {
                     var tab = this.findTab(e.target);
                     if (tab) {
-                        var contentToDisplay = document.querySelector(tab.getAttribute('for'));
+                        var contentToDisplay = document.getElementById(tab.getAttribute('for'));
                         var CustomEventInit = {
                                 bubbles: true,
                                 detail: {
@@ -86,7 +85,7 @@
             displayCurrentContent: {
                 enumerable: true,
                 value: function () {
-                    var contentToDisplay = document.querySelector(this.displayedTab.getAttribute('for'));
+                    var contentToDisplay = document.getElementById(this.displayedTab.getAttribute('for'));
                     contentToDisplay.classList.remove('b-tabs-hidden');
                 }
             },
@@ -108,7 +107,7 @@
             hideContent: {
                 enumerable: true,
                 value: function (tab) {
-                    var elementToHide = document.body.querySelector(tab.getAttribute('for'));
+                    var elementToHide = document.getElementById(tab.getAttribute('for'));
                     elementToHide.classList.add('b-tabs-hidden');
                 }
             },

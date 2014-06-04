@@ -259,7 +259,7 @@ describe("b-tabs", function() {
 
         beforeEach(function(done) {
             var $span = document.createElement('span');
-            $span.setAttribute('for', '#four');
+            $span.setAttribute('for', 'four');
             $span.innerHTML = 'tab4';
             this.tabs.appendChild($span);
 
@@ -303,9 +303,9 @@ function createTabsList(wrapper, selected, tabsMarkup, contentMarkup) {
 }
 
 function createBasicTabsList(wrapper, selected) {
-    var tabsMarkup = '<span for="#one">tab1</span>' +
-                     '<span for="#two">tab2</span>' +
-                     '<span for="#three">tab3</span>';
+    var tabsMarkup = '<span for="one">tab1</span>' +
+                     '<span for="two">tab2</span>' +
+                     '<span for="three">tab3</span>';
 
 
     var contentMarkup = '<div id="one">content 1</div>' +
@@ -316,8 +316,8 @@ function createBasicTabsList(wrapper, selected) {
 }
 
 function createTabsListWithAction(wrapper, selected) {
-    var tabsMarkup = '<span for="#one">tab1</span>' +
-        '<span for="#two">tab2</span>' +
+    var tabsMarkup = '<span for="one">tab1</span>' +
+        '<span for="two">tab2</span>' +
         '<span class="action">Action</span>';
 
     var contentMarkup = '<div id="one">content 1</div>' +
@@ -327,9 +327,9 @@ function createTabsListWithAction(wrapper, selected) {
 }
 
 function createTabsListWithActionBetweenLi(wrapper, selected) {
-    var tabsMarkup = '<span for="#one">tab1</span>' +
+    var tabsMarkup = '<span for="one">tab1</span>' +
         '<span class="action">Action</span>' +
-        '<span for="#two">tab2</span>';
+        '<span for="two">tab2</span>';
 
 
     var contentMarkup = '<div id="one">content 1</div>' +

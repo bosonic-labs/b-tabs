@@ -46,45 +46,103 @@
 
     <!-- Tabs -->
     <b-tabs selected="1">
-        <span for="#one">Tab 1</span>
-        <span for="#two">Tab 2</span>
-        <span>|</span>
-        <span for="#three">Tab 3</span>
-        <span>+</span>
+        <span for="content1">Tab 1</span>
+        <span for="content2">Tab 2</span>
+        <span for="content3">Tab 3</span>
+        <span id="add-tab-btn">+</span>
 	</b-tabs>
 
     <!-- Contents -->
     <div class="content-wrapper">
-        <div id="one">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Rerum, nobis, beatae facere voluptates esse cupiditate sit laboriosam veniam quis facilis laborum distinctio nam ex incidunt architecto molestias eligendi optio? Sunt?
+        <div id="content1">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam commodo, diam vitae auctor malesuada, elit sem facilisis sapien, at sagittis dui lorem sit amet ante. Maecenas nec elementum tellus, vel ultrices dui. Donec ultricies, nisi in porta dapibus, metus ante varius erat, nec scelerisque eros elit in quam. Ut eu nisi vel metus ullamcorper gravida in sed ligula. Mauris nec volutpat quam. Duis nec ligula vitae nisl sollicitudin eleifend quis et libero. Nullam gravida porta eleifend.
         </div>
-        <div id="two">
-            Iste, reiciendis expedita officiis sequi suscipit neque ipsa! Architecto, repellendus, quam totam aliquid voluptates consequatur alias aspernatur temporibus amet dicta a modi optio nesciunt. Dicta, voluptatum in veniam consectetur vero.
+        <div id="content2">
+            Sed sagittis adipiscing ultricies. Morbi eget pellentesque lacus. Vivamus rhoncus odio et dolor tempor sollicitudin. Nullam in turpis id lorem accumsan aliquet a ac leo. Sed viverra sollicitudin enim euismod rutrum. Maecenas ullamcorper leo nec elit ultrices eleifend nec vitae tellus. Donec porttitor tincidunt rhoncus. Phasellus adipiscing ante neque, vel pellentesque ipsum auctor tincidunt. Cras a interdum mi. Aliquam placerat eleifend sem, in rhoncus dolor. Etiam consectetur sagittis diam, nec euismod nulla rutrum ut.
         </div>
-        <div id="three">
-            Nisi, ipsum fuga nostrum alias quidem deleniti dignissimos provident veniam culpa optio! Soluta, consequatur, minus corporis dolor repellat non at aperiam error nesciunt reiciendis! Omnis vitae itaque quas nostrum molestiae.
+        <div id="content3">
+            Fusce aliquam augue dolor, nec laoreet urna consectetur eget. Vestibulum hendrerit mi sed sapien molestie, sit amet viverra lorem lobortis. Sed aliquam pretium felis et pretium. Duis faucibus lectus nec arcu placerat, at elementum mauris pellentesque. Nulla molestie malesuada sapien, non rutrum nibh facilisis sit amet. Proin quam enim, tempor ac imperdiet id, scelerisque ac leo. Integer vel tellus sed nibh luctus ultricies ut quis felis. Curabitur ac justo nec ligula fermentum feugiat. Etiam vestibulum bibendum accumsan. Suspendisse potenti. Aenean sit amet egestas massa. Aenean urna arcu, euismod sed nunc sed, luctus convallis felis.
         </div>
     </div>
 
     <!-- Logs -->
-    <div id="logs">
+    <div id="logs"></div>
 
     <script type="text/javascript">
 
-        var logs = document.getElementById('logs');
+        window.addEventListener('WebComponentsReady', function() {
+            // NodeElements
+            var $btabs = document.querySelector('b-tabs');
+            var $tabs = $btabs.querySelectorAll('[for]');
+            var $addTabBtn = $btabs.querySelector('#add-tab-btn');
+            var $contentWrapper = document.querySelector('.content-wrapper');
 
-        function eventCallback(eventName, detail) {
-            var newLog = document.createElement('div');
-            newLog.innerHTML = new Date()+' - '+eventName+' - tab: '+detail.tab+' - content: '+detail.content;
-            logs.appendChild(newLog);
-            logs.scrollTop = logs.scrollHeight;
-        }
+            var nextContentId = $tabs.length+1;
+            var nextLoremId = 0;
 
-        document.addEventListener('b-tabs-willChange', function(e) {
-            eventCallback('b-tabs-willChange', e.detail);
-        });
-        document.addEventListener('b-tabs-hasChanged', function(e) {
-            eventCallback('b-tabs-hasChanged', e.detail);
+            // Init
+            initAddTabListener();
+            initTabsChangeListener();
+
+            function initAddTabListener() {
+                $addTabBtn.addEventListener('click', function (e) {
+
+                    // Create new content div
+                    var $newContent = document.createElement('div');
+                    var newContentId = 'content' + nextContentId;
+                    $newContent.setAttribute('id', newContentId);
+                    $newContent.innerHTML = getNextLorem();
+
+                    // Append the content div to the content-wrapper;
+                    $contentWrapper.appendChild($newContent);
+
+                    // Create the new tab
+                    var $newTab = document.createElement('span');
+                    $newTab.setAttribute('for', newContentId);
+                    $newTab.innerHTML = 'Tab ' + nextContentId;
+
+                    // Append the tab to the <b-tabs>
+                    // Must be done AFTER inserting the content DOM,
+                    // otherwise <b-tabs> won't hide the associated content
+                    $btabs.insertBefore($newTab, $addTabBtn);
+
+                    nextContentId++;
+                });
+            }
+
+            function initTabsChangeListener() {
+
+                document.addEventListener('b-tabs-willChange', function (e) {
+                    eventCallback('b-tabs-willChange', e.detail);
+                });
+
+                document.addEventListener('b-tabs-hasChanged', function (e) {
+                    eventCallback('b-tabs-hasChanged', e.detail);
+                });
+            }
+
+            function eventCallback(eventName, detail) {
+                var logs = document.getElementById('logs');
+                var newLog = document.createElement('div');
+                newLog.innerHTML = new Date() + ' - ' + eventName + ' - tab: ' + detail.tab + ' - content: ' + detail.content;
+                logs.appendChild(newLog);
+                logs.scrollTop = logs.scrollHeight;
+            }
+
+            function getNextLorem() {
+                var lorem = [
+                    'Integer mollis justo eros, sed eleifend felis aliquam eget. Nulla venenatis ultrices eros eget viverra. Pellentesque pulvinar ultricies facilisis. Maecenas vel diam odio. Aenean blandit ac risus vel sagittis. Praesent in arcu vitae dui ullamcorper tempor. Nunc adipiscing vel dolor eu fermentum. Suspendisse feugiat purus a arcu ornare, eget convallis velit convallis. Vestibulum in elit nec ipsum bibendum lacinia. Aenean lobortis leo quis dui porta condimentum. Nunc pellentesque nisl sit amet magna viverra rutrum. Fusce mauris metus, mattis et adipiscing a, condimentum at ligula. Phasellus leo mauris, hendrerit et ornare pharetra, consectetur quis quam. Nullam rhoncus id lectus eu mollis.',
+                    'Morbi cursus sapien leo, in commodo eros venenatis in. In id commodo mauris. Nulla dolor arcu, consectetur id urna non, commodo laoreet nulla. Phasellus nibh felis, suscipit tempor mi in, faucibus eleifend orci. Mauris pretium feugiat auctor. Sed eu metus ac urna imperdiet vulputate. Aliquam pretium feugiat cursus. Cras gravida porttitor nisi a convallis. Nulla tristique posuere gravida. Cras suscipit tortor nec erat volutpat tristique. Proin tincidunt nunc a urna tincidunt, sit amet sagittis orci accumsan. Fusce quis nunc nec velit fermentum vulputate.',
+                    'Nullam quis elit justo. In sit amet lorem vehicula felis egestas rhoncus. Phasellus vulputate malesuada vehicula. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Integer id lorem fringilla massa fermentum congue. Etiam pulvinar, risus rhoncus posuere suscipit, nulla mi porta erat, quis placerat orci mauris a ante. Ut nec ipsum vestibulum, mattis diam sed, porttitor eros.',
+                    'Vivamus sollicitudin sem dui, ac consectetur tellus sodales sit amet. Donec vehicula lacus in tristique mollis. Cras suscipit euismod neque ut venenatis. Proin et leo vitae quam aliquet porttitor et vitae est. In non nibh a neque consequat porta sit amet a ipsum. Praesent dictum erat nec augue vestibulum lobortis. Integer at posuere risus, a sollicitudin magna. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Morbi laoreet malesuada convallis. Pellentesque ultrices ultrices libero, vitae porttitor massa venenatis et. Fusce fermentum arcu in nunc commodo pulvinar.',
+                    'Proin hendrerit varius faucibus. Integer convallis nibh eu purus interdum volutpat. Interdum et malesuada fames ac ante ipsum primis in faucibus. Donec eu ornare eros. In hac habitasse platea dictumst. In non fringilla lacus. Etiam imperdiet mauris sit amet nisl rhoncus, eu rutrum magna mollis. Fusce et arcu sagittis, mollis felis quis, viverra dui. Nulla fermentum, diam ornare blandit venenatis, magna ligula lobortis velit, at vestibulum nunc metus eget lacus. Vestibulum pulvinar mi vel dui pharetra euismod. Quisque faucibus lorem ut sagittis venenatis.',
+                    'In tortor eros, luctus at enim eget, varius laoreet sapien. Curabitur eu dui id elit elementum convallis. Morbi fermentum massa non rhoncus porta. Etiam tempus commodo tellus et gravida. Curabitur euismod nisl tempor, aliquam velit eu, tincidunt elit. Aliquam hendrerit feugiat mi eget dapibus. Maecenas lectus ligula, congue ac mauris iaculis, venenatis consectetur magna. In nulla lectus, auctor vel mi mollis, pulvinar molestie purus.'
+                ];
+
+                var res = lorem[nextLoremId];
+                nextLoremId = nextLoremId === lorem.length ? 0 : nextLoremId+1;
+                return res;
+            }
         });
     </script>
 </body>

@@ -14,36 +14,32 @@ Otherwise, you can download and include in your HTML file the builded CSS & JS f
 
 ## Usage
 
-The first child of `<b-tabs>` must be an unordered list that will become the *tabs*.
+```<b-tabs>``` contains a list of tabs. Each tab has a ```for``` attribute targeting a DOM element by his ID.
 
-The second child must be an element with a children for each tab, they will become the *contents*.
+If we want to add a tab without a target, we just have to ommit the ```for``` attribute. It could be usefull to create an action button.
 
-The ```data-target``` is a selector to the content div linked from a given tab. If missing, the tab won't be (linked to any content (could be use for an action button for example).
-
-The optional ```selected``` attribute indicates which tab is visible.
+The optional ```selected``` attribute on ```<b-tabs>```, starting at 0, indicates which tab is visible.
 
 ```html
 <b-tabs selected="1">
-    <ul>
-        <li data-target="#one">Tab 1</li>
-        <li data-target="#two">Tab 2</li>
-        <li data-target="#three">Tab 3</li>
-        <li>+</li>
-    </ul>
-
-    <div>
-        <div id="one">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Rerum, nobis, beatae facere voluptates esse cupiditate sit laboriosam veniam quis facilis laborum distinctio nam ex incidunt architecto molestias eligendi optio? Sunt?
-        </div>
-        <div id="two">
-            Iste, reiciendis expedita officiis sequi suscipit neque ipsa! Architecto, repellendus, quam totam aliquid voluptates consequatur alias aspernatur temporibus amet dicta a modi optio nesciunt. Dicta, voluptatum in veniam consectetur vero.
-        </div>
-        <div id="three">
-            Nisi, ipsum fuga nostrum alias quidem deleniti dignissimos provident veniam culpa optio! Soluta, consequatur, minus corporis dolor repellat non at aperiam error nesciunt reiciendis! Omnis vitae itaque quas nostrum molestiae.
-        </div>
-    </div>
+    <span for="one">Tab 1</span>
+    <span for="two">Tab 2</span>
+    <span for="three">Tab 3</span>
+    <span>+</span>
 </b-tabs>
+
+<div id="one">
+    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Rerum, nobis, beatae facere voluptates esse cupiditate sit laboriosam veniam quis facilis laborum distinctio nam ex incidunt architecto molestias eligendi optio? Sunt?
+</div>
+<div id="two">
+    Iste, reiciendis expedita officiis sequi suscipit neque ipsa! Architecto, repellendus, quam totam aliquid voluptates consequatur alias aspernatur temporibus amet dicta a modi optio nesciunt. Dicta, voluptatum in veniam consectetur vero.
+</div>
+<div id="three">
+    Nisi, ipsum fuga nostrum alias quidem deleniti dignissimos provident veniam culpa optio! Soluta, consequatur, minus corporis dolor repellat non at aperiam error nesciunt reiciendis! Omnis vitae itaque quas nostrum molestiae.
+</div>
 ```
+
+It is possible to add a tab after inserting ```<b-tabs>``` in the DOM. However, the content element must be inserted before the tab.
 
 ### Events
 
