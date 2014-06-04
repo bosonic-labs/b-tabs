@@ -10,7 +10,6 @@
                 enumerable: true,
                 value: function () {
                     this.appendChild(this.template.content.cloneNode(true));
-                    this.tabsNavigation = this.querySelector('ul');
                     this.init();
                     this.addListeners();
                 }
@@ -18,7 +17,6 @@
             childListChangedCallback: {
                 enumerable: true,
                 value: function (removedNodes, addedNodes) {
-                    console.log('childListChangedCallback');
                     if (addedNodes) {
                         console.log('addedNodes.length' + addedNodes.length);
                         Array.prototype.filter.call(addedNodes, this.nodeIsATab).forEach(this.hideElement.bind(this));
@@ -34,30 +32,25 @@
             init: {
                 enumerable: true,
                 value: function () {
-                    if (this.tabsNavigation) {
-                        this.tabsNavigation.classList.add('b-tabs-navigation');
-                        var allLis = this.tabsNavigation.querySelectorAll('li[data-target]');
-                        Array.prototype.forEach.call(allLis, function (li) {
-                            this.hideElement(li);
-                        }.bind(this));
-                        this.displayTab(allLis[this.selectedIndex]);
-                    }
+                    var allTabs = this.querySelectorAll('[for]');
+                    Array.prototype.forEach.call(allTabs, function (tab) {
+                        this.hideElement(tab);
+                    }.bind(this));
+                    this.displayTab(allTabs[this.selectedIndex]);
                 }
             },
             addListeners: {
                 enumerable: true,
                 value: function () {
-                    if (this.tabsNavigation) {
-                        this.displayListener = this.display.bind(this);
-                        this.tabsNavigation.addEventListener('click', this.displayListener);
-                    }
+                    this.displayListener = this.display.bind(this);
+                    this.addEventListener('click', this.displayListener);
                 }
             },
             removeListeners: {
                 enumerable: true,
                 value: function () {
-                    if (this.tabsNavigation && this.displayListener) {
-                        this.tabsNavigation.removeEventListener('click', this.displayListener);
+                    if (this.displayListener) {
+                        this.removeEventListener('click', this.displayListener);
                         this.displayListener = null;
                     }
                 }
@@ -65,27 +58,27 @@
             display: {
                 enumerable: true,
                 value: function (e) {
-                    var li = this.findLi(e.target);
-                    if (li) {
-                        var contentToDisplay = document.querySelector(li.getAttribute('data-target'));
+                    var tab = this.findTab(e.target);
+                    if (tab) {
+                        var contentToDisplay = document.querySelector(tab.getAttribute('for'));
                         var CustomEventInit = {
                                 bubbles: true,
                                 detail: {
-                                    tab: li,
+                                    tab: tab,
                                     content: contentToDisplay
                                 }
                             };
                         this.dispatchEvent(new CustomEvent('b-tabs-willChange', CustomEventInit));
-                        this.displayTab(li);
+                        this.displayTab(tab);
                         this.dispatchEvent(new CustomEvent('b-tabs-hasChanged', CustomEventInit));
                     }
                 }
             },
             displayTab: {
                 enumerable: true,
-                value: function (li) {
-                    this.hideElement(this.displayedLi);
-                    this.displayedLi = li;
+                value: function (tab) {
+                    this.hideElement(this.displayedTab);
+                    this.displayedTab = tab;
                     this.displayCurrentContent();
                     this.displayCurrentTab();
                 }
@@ -93,57 +86,57 @@
             displayCurrentContent: {
                 enumerable: true,
                 value: function () {
-                    var contentToDisplay = document.querySelector(this.displayedLi.getAttribute('data-target'));
+                    var contentToDisplay = document.querySelector(this.displayedTab.getAttribute('for'));
                     contentToDisplay.classList.remove('b-tabs-hidden');
                 }
             },
             displayCurrentTab: {
                 enumerable: true,
                 value: function () {
-                    this.displayedLi.classList.remove('b-tabs-hidden');
-                    this.displayedLi.classList.add('b-tabs-visible');
+                    this.displayedTab.classList.add('b-tabs-visible');
                 }
             },
             hideElement: {
                 enumerable: true,
-                value: function (li) {
-                    if (li) {
-                        this.hideContent(li);
-                        this.hideTab(li);
+                value: function (tab) {
+                    if (tab) {
+                        this.hideContent(tab);
+                        this.hideTab(tab);
                     }
                 }
             },
             hideContent: {
                 enumerable: true,
-                value: function (li) {
-                    var elementToHide = document.body.querySelector(li.getAttribute('data-target'));
+                value: function (tab) {
+                    var elementToHide = document.body.querySelector(tab.getAttribute('for'));
                     elementToHide.classList.add('b-tabs-hidden');
                 }
             },
             hideTab: {
                 enumerable: true,
-                value: function (li) {
-                    li.classList.add('b-tabs-hidden');
-                    li.classList.remove('b-tabs-visible');
+                value: function (tab) {
+                    tab.classList.remove('b-tabs-visible');
                 }
             },
-            findLi: {
+            findTab: {
                 enumerable: true,
                 value: function (target) {
                     var currentNode = target;
-                    var li = null;
-                    while (currentNode.tagName !== 'B-TABS' && li === null) {
-                        if (this.nodeIsATab(currentNode))
-                            li = currentNode;
-                        currentNode = currentNode.parentNode;
+                    var tab = null;
+                    while (tab === null && currentNode !== document.body) {
+                        if (this.nodeIsATab(currentNode)) {
+                            tab = currentNode;
+                        } else {
+                            currentNode = currentNode.parentNode;
+                        }
                     }
-                    return li;
+                    return tab;
                 }
             },
             nodeIsATab: {
                 enumerable: true,
                 value: function (node) {
-                    return node.tagName === 'LI' && node.getAttribute('data-target');
+                    return node.hasAttribute && node.hasAttribute('for');
                 }
             }
         });

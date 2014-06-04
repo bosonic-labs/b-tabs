@@ -1,9 +1,4 @@
-b-tabs .b-tabs-navigation li {
-  display: inline;
-  font-weight: bold;
-}
-
-b-tabs .b-tabs-navigation li.b-tabs-hidden {
+b-tabs .b-tabs-hidden {
   font-weight: 400;
 }
 

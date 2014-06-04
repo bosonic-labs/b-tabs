@@ -1,11 +1,7 @@
 <element name="b-tabs">
     <style>
-        b-tabs .b-tabs-navigation li {
-            display: inline;
-            font-weight: bold;
-        }
 
-        b-tabs .b-tabs-navigation li.b-tabs-hidden {
+        b-tabs .b-tabs-hidden {
             font-weight: 400;
         }
 
@@ -29,15 +25,11 @@
 
             createdCallback: function() {
                 this.appendChild(this.template.content.cloneNode(true));
-
-                this.tabsNavigation = this.querySelector('ul');
-
                 this.init();
                 this.addListeners();
             },
 
             childListChangedCallback: function(removedNodes, addedNodes) {
-                console.log('childListChangedCallback');
                 if(addedNodes) {
                     console.log('addedNodes.length'+addedNodes.length);
                     Array.prototype
@@ -53,101 +45,95 @@
             // ---- Internal API ---- //
 
             init: function() {
-                if (this.tabsNavigation) {
-                    this.tabsNavigation.classList.add('b-tabs-navigation');
+                var allTabs = this.querySelectorAll('[for]');
 
-                    var allLis = this.tabsNavigation.querySelectorAll('li[data-target]');
+                Array.prototype.forEach.call(allTabs, function(tab) {
+                    this.hideElement(tab);
+                }.bind(this));
 
-                    Array.prototype.forEach.call(allLis, function(li) {
-                        this.hideElement(li);
-                    }.bind(this));
-
-                    this.displayTab(allLis[this.selectedIndex]);
-                }
+                this.displayTab(allTabs[this.selectedIndex]);
             },
 
             addListeners: function() {
-                if (this.tabsNavigation) {
-                	this.displayListener = this.display.bind(this);
-                	this.tabsNavigation.addEventListener('click', this.displayListener);
-                }
+                this.displayListener = this.display.bind(this);
+                this.addEventListener('click', this.displayListener);
             },
 
             removeListeners: function() {
-            	if (this.tabsNavigation && this.displayListener) {
-            		this.tabsNavigation.removeEventListener('click', this.displayListener);
+            	if (this.displayListener) {
+            		this.removeEventListener('click', this.displayListener);
             		this.displayListener = null;
             	}
             },
 
             display: function(e) {
-                var li = this.findLi(e.target);
-                if (li) {
-                    var contentToDisplay = document.querySelector(li.getAttribute('data-target'));
+                var tab = this.findTab(e.target);
+                if (tab) {
+                    var contentToDisplay = document.querySelector(tab.getAttribute('for'));
                     var CustomEventInit = {
                         bubbles: true,
                         detail: {
-                            tab: li,
+                            tab: tab,
                             content: contentToDisplay
                         }
                     };
                     this.dispatchEvent(new CustomEvent('b-tabs-willChange', CustomEventInit));
-                    this.displayTab(li);
+                    this.displayTab(tab);
                     this.dispatchEvent(new CustomEvent('b-tabs-hasChanged', CustomEventInit));
                 }
             },
 
-            displayTab: function(li) {
-                this.hideElement(this.displayedLi);
-                this.displayedLi = li;
+            displayTab: function(tab) {
+                this.hideElement(this.displayedTab);
+                this.displayedTab = tab;
                 this.displayCurrentContent();
                 this.displayCurrentTab();
             },
 
             displayCurrentContent: function() {
-                var contentToDisplay = document.querySelector(this.displayedLi.getAttribute('data-target'));
+                var contentToDisplay = document.querySelector(this.displayedTab.getAttribute('for'));
                 contentToDisplay.classList.remove('b-tabs-hidden');
             },
 
             displayCurrentTab: function() {
-                this.displayedLi.classList.remove('b-tabs-hidden');
-                this.displayedLi.classList.add('b-tabs-visible');
+                this.displayedTab.classList.add('b-tabs-visible');
             },
 
 
-            hideElement: function(li) {
-                if(li) {
-                    this.hideContent(li);
-                    this.hideTab(li);
+            hideElement: function(tab) {
+                if(tab) {
+                    this.hideContent(tab);
+                    this.hideTab(tab);
                 }
             },
 
-            hideContent: function(li) {
-                var elementToHide = document.body.querySelector(li.getAttribute('data-target'));
+            hideContent: function(tab) {
+                var elementToHide = document.body.querySelector(tab.getAttribute('for'));
                 elementToHide.classList.add('b-tabs-hidden');
             },
 
-            hideTab: function(li) {
-                li.classList.add('b-tabs-hidden');
-                li.classList.remove('b-tabs-visible');
+            hideTab: function(tab) {
+                tab.classList.remove('b-tabs-visible');
             },
 
-            findLi: function(target) {
+            findTab: function(target) {
                 var currentNode = target;
-                var li = null;
+                var tab = null;
 
-                while (currentNode.tagName !== 'B-TABS' && li === null) {
-                    if (this.nodeIsATab(currentNode))
-                        li = currentNode;
-
-                    currentNode = currentNode.parentNode;
+                while (tab === null && currentNode !== document.body) {
+                    if(this.nodeIsATab(currentNode)) {
+                        tab = currentNode;
+                    } else {
+                        currentNode = currentNode.parentNode;
+                    }
                 }
 
-                return li;
+
+                return tab;
             },
 
             nodeIsATab: function(node) {
-                return node.tagName === 'LI' && node.getAttribute('data-target');
+                return node.hasAttribute && node.hasAttribute('for');
             }
 
         });

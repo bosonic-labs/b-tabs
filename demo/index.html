@@ -10,17 +10,17 @@
 <body>
 
 	<style>
-        .b-tabs-navigation {
+        b-tabs {
             margin: 0;
             margin-bottom: 4px;
         }
-        .b-tabs-navigation li[data-target] {
+        b-tabs *[for].b-tabs-visible {
             background: #fff;
             border: 1px solid #ccc;
             border-bottom: 1px solid #fff;
             padding: 5px;
         }
-        .b-tabs-navigation li[data-target].b-tabs-hidden {
+        b-tabs *[for] {
             background: #ddd;
             border-bottom: 1px solid #ccc;
         }
@@ -46,13 +46,11 @@
 
     <!-- Tabs -->
     <b-tabs selected="1">
-		<ul>
-			<li data-target="#one">Tab 1</li>
-			<li data-target="#two">Tab 2</li>
-            <li>/</li>
-			<li data-target="#three">Tab 3</li>
-			<li>+</li>
-		</ul>
+        <span for="#one">Tab 1</span>
+        <span for="#two">Tab 2</span>
+        <span>|</span>
+        <span for="#three">Tab 3</span>
+        <span>+</span>
 	</b-tabs>
 
     <!-- Contents -->
