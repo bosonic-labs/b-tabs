@@ -58,7 +58,7 @@
                 enumerable: true,
                 value: function (e) {
                     var tab = this.findTab(e.target);
-                    if (tab) {
+                    if (tab && tab !== this.displayedTab) {
                         var contentToDisplay = document.getElementById(tab.getAttribute('for'));
                         var CustomEventInit = {
                                 bubbles: true,

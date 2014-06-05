@@ -192,6 +192,48 @@ describe("b-tabs", function() {
 
     });
 
+
+    describe("when clicking the selected tab", function() {
+
+        it("should not fire a 'b-tabs-willChange'", function(done) {
+
+            var eventFired = false;
+
+            this.wrapper.addEventListener('b-tabs-willChange', function() {
+                eventFired = true;
+            }.bind(this));
+
+            // When
+            mouse.click(this.tabs.childNodes[0]);
+
+            // Then
+            setTimeout(function() {
+                expect(eventFired).to.be.false;
+                done();
+            }, 100)
+        });
+
+        it("should not fire a 'b-tabs-hasChanged'", function(done) {
+
+            var eventFired = false;
+
+            this.wrapper.addEventListener('b-tabs-willChange', function() {
+                eventFired = true;
+            }.bind(this));
+
+            // When
+            mouse.click(this.tabs.childNodes[0]);
+
+            // Then
+            setTimeout(function() {
+                expect(eventFired).to.be.false;
+                done();
+            }, 100)
+        });
+
+    });
+
+
     describe("when having a action tab", function() {
 
         beforeEach(function(done) {
