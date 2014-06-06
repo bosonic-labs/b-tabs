@@ -296,7 +296,6 @@ describe("b-tabs", function() {
 
     });
 
-
     describe("When adding a tab to an existing b-tabs", function() {
 
         beforeEach(function(done) {
@@ -330,6 +329,95 @@ describe("b-tabs", function() {
             expect(contentIsVisible('#four')).to.be.true;
         });
 
+    });
+
+    describe("when changing the selected attribute, from '0' to '1'", function() {
+
+        it("should display the second tab", function() {
+            // When
+            this.tabs.setAttribute('selected', 1);
+
+            // Then
+            expect(tabIsVisible(this.tabs, 1)).to.be.true;
+        });
+
+        it("should hide the first and third tabs", function() {
+            // When
+            this.tabs.setAttribute('selected', 1);
+
+            // Then
+            expect(tabIsHidden(this.tabs, 0)).to.be.true;
+            expect(tabIsHidden(this.tabs, 2)).to.be.true;
+        });
+
+        it("should display content targeted by the second tab", function() {
+            // When
+            this.tabs.setAttribute('selected', 1);
+
+            // Then
+            expect(contentIsVisible("#two")).to.be.true;
+        });
+
+        it("should hide all contents not targeted by the second tab", function() {
+            // When
+            this.tabs.setAttribute('selected', 1);
+
+            // Then
+            expect(contentIsHidden("#one")).to.be.true;
+            expect(contentIsHidden("#three")).to.be.true;
+        });
+
+        it("should fire a 'b-tabs-willChange' event before the change", function(done) {
+
+            // Then
+            this.wrapper.addEventListener('b-tabs-willChange', function() {
+                // Before the change, the first tab is still displayed
+                expect(tabIsVisible(this.tabs, 0)).to.be.true;
+                done();
+            }.bind(this));
+
+            // When
+            this.tabs.setAttribute('selected', 1);
+        });
+
+        it("should fire a 'b-tabs-hasChanged' event after the change", function(done) {
+
+            // Then
+            this.wrapper.addEventListener('b-tabs-hasChanged', function() {
+                // After the change, the second tab is displayed
+                expect(tabIsVisible(this.tabs, 1)).to.be.true;
+                done();
+            }.bind(this));
+
+            // When
+            this.tabs.setAttribute('selected', 1);
+        });
+
+        it("'b-tabs-willChange' event shall contains the target elements", function(done) {
+
+            // Then
+            this.wrapper.addEventListener('b-tabs-willChange', function(e) {
+                expect(e.detail.tab).to.be.equal(getNthDataTargetTab(this.tabs, 1));
+                expect(e.detail.content).to.be.equal(document.querySelector('#two'));
+                done();
+            }.bind(this));
+
+            // When
+            this.tabs.setAttribute('selected', 1);
+        });
+
+        it("'b-tabs-hasChanged' event shall contains the target elements", function(done) {
+
+            // Then
+            this.wrapper.addEventListener('b-tabs-hasChanged', function(e) {
+                expect(e.detail.tab).to.be.equal(getNthDataTargetTab(this.tabs, 1));
+                expect(e.detail.content).to.be.equal(document.querySelector('#two'));
+                done();
+            }.bind(this));
+
+            // When
+            this.tabs.setAttribute('selected', 1);
+        });
     });
 });
 

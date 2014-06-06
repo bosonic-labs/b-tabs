@@ -21,7 +21,7 @@
             get selectedIndex() {
                 return this.getAttribute('selected') || 0;
             },
-        	// ---- Component lifecycle ---- //
+        	// ---- Component callbacks ---- //
 
             createdCallback: function() {
                 this.appendChild(this.template.content.cloneNode(true));
@@ -37,6 +37,12 @@
                 }
             },
 
+            attributeChangedCallback: function(name) {
+                if (name === 'selected') {
+                    this.displayTabAndFireEvents(this.getAllTabs()[this.selectedIndex]);
+                }
+            },
+
             detachedCallback: function() {
                 this.removeListeners();
             },
@@ -44,7 +50,7 @@
             // ---- Internal API ---- //
 
             init: function() {
-                var allTabs = this.querySelectorAll('[for]');
+                var allTabs = this.getAllTabs();
 
                 Array.prototype.forEach.call(allTabs, function(tab) {
                     this.hideElement(tab);
@@ -67,6 +73,10 @@
 
             display: function(e) {
                 var tab = this.findTab(e.target);
+                this.displayTabAndFireEvents(tab);
+            },
+
+            displayTabAndFireEvents: function (tab) {
                 if (tab && tab !== this.displayedTab) {
                     var contentToDisplay = document.getElementById(tab.getAttribute('for'));
                     var CustomEventInit = {
@@ -133,6 +143,10 @@
 
             nodeIsATab: function(node) {
                 return node.hasAttribute && node.hasAttribute('for');
+            },
+
+            getAllTabs: function () {
+                return this.querySelectorAll('[for]');
             }
 
         });

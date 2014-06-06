@@ -22,6 +22,14 @@
                     }
                 }
             },
+            attributeChangedCallback: {
+                enumerable: true,
+                value: function (name) {
+                    if (name === 'selected') {
+                        this.displayTabAndFireEvents(this.getAllTabs()[this.selectedIndex]);
+                    }
+                }
+            },
             detachedCallback: {
                 enumerable: true,
                 value: function () {
@@ -31,7 +39,7 @@
             init: {
                 enumerable: true,
                 value: function () {
-                    var allTabs = this.querySelectorAll('[for]');
+                    var allTabs = this.getAllTabs();
                     Array.prototype.forEach.call(allTabs, function (tab) {
                         this.hideElement(tab);
                     }.bind(this));
@@ -58,6 +66,12 @@
                 enumerable: true,
                 value: function (e) {
                     var tab = this.findTab(e.target);
+                    this.displayTabAndFireEvents(tab);
+                }
+            },
+            displayTabAndFireEvents: {
+                enumerable: true,
+                value: function (tab) {
                     if (tab && tab !== this.displayedTab) {
                         var contentToDisplay = document.getElementById(tab.getAttribute('for'));
                         var CustomEventInit = {
@@ -136,6 +150,12 @@
                 enumerable: true,
                 value: function (node) {
                     return node.hasAttribute && node.hasAttribute('for');
+                }
+            },
+            getAllTabs: {
+                enumerable: true,
+                value: function () {
+                    return this.querySelectorAll('[for]');
                 }
             }
         });
