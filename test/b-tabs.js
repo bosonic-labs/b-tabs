@@ -331,6 +331,22 @@ describe("b-tabs", function() {
 
     });
 
+    describe("When adding a tab targeting the active content", function() {
+
+        beforeEach(function(done) {
+            var $span = document.createElement('span');
+            $span.setAttribute('for', 'one');
+            $span.innerHTML = 'tab4';
+            this.tabs.appendChild($span);
+
+            setTimeout(done, 100);
+        });
+
+        it("shouldn't hide it", function() {
+            expect(contentIsVisible('#one')).to.be.true;
+        });
+    });
+
     describe("when changing the selected attribute, from '0' to '1'", function() {
 
         it("should display the second tab", function() {

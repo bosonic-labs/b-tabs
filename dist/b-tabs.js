@@ -18,7 +18,9 @@
                 enumerable: true,
                 value: function (removedNodes, addedNodes) {
                     if (addedNodes) {
-                        Array.prototype.filter.call(addedNodes, this.nodeIsATab).forEach(this.hideElement.bind(this));
+                        Array.prototype.filter.call(addedNodes, function (tab) {
+                            return this.nodeIsATab(tab) && tab.getAttribute('for') !== this.displayedTab.getAttribute('for');
+                        }.bind(this)).forEach(this.hideElement.bind(this));
                     }
                 }
             },
