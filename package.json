@@ -1,6 +1,6 @@
 {
   "name": "b-tabs",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "A Bosonic element for tabs and tab panels.",
   "main": "Gruntfile.js",
   "scripts": {
